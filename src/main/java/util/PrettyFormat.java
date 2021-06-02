@@ -36,8 +36,10 @@ public class PrettyFormat {
 
     public static String getHTMLFromModule(ModuleSource module) throws  IOException {
         //todo checks
-        String file_path = "src/main/"+module.getCanonicalName().replace(".","/")+".nl";
-        String command = "pygmentize -O full,style=emacs,linenos=1 -f html -x -l lexer.py:NeverlangLexer "+file_path;
+        String file_path = module.getCanonicalName().replace(".","/")+".nl";
+        String abs_path = Resource.concat(Resource.NL_PATH, file_path);
+        System.out.println(abs_path);
+        String command = "pygmentize -O full,style=emacs,linenos=1 -f html -x -l lexer.py:NeverlangLexer "+abs_path;
         Process proc = Runtime.getRuntime().exec(command);
 
         BufferedReader reader =

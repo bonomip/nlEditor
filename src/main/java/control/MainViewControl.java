@@ -12,6 +12,7 @@ import model.Editor;
 import neverlang.compiler.mdl.ModuleSource;
 
 import neverlang.runtime.Unit;
+import util.Resource;
 import view.MainView;
 
 import javax.lang.model.SourceVersion;
@@ -48,6 +49,7 @@ public class MainViewControl {
     public MainViewControl(MainView view, String nl_path) throws Exception {
         try {
             this.edit = new Editor(nl_path);
+            Resource.NL_PATH = nl_path+"/";
         } catch (IOException e) {
             Message.showErrorAlert("Error loading neverlang files!");
             e.printStackTrace();

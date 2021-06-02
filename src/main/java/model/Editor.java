@@ -20,6 +20,7 @@ public class Editor {
         env = new AiDEEnvironment();
         env.loadDir(dir_path);
 
+
         this.extractAbstractSyntax();
         this.extractConcreteSyntax();
     }
