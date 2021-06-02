@@ -1,0 +1,95 @@
+plugins {
+  id 'neverlang' version '0.1'
+  id 'java'
+  id 'eclipse'
+  id 'idea'
+  id 'maven-publish'
+  id 'application'
+  id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+
+application {
+  mainClass = "Main"
+}
+
+group = 'it.unimi.di.adaptlab.neverlang'
+version = '1.0.0'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	jcenter()
+}
+
+/*Java Version*/
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+neverlang {
+  includeNeverlangLibrary = false
+  sourceDir = 'src/main/neverlang'
+}
+
+javafx {
+    version = "15.0.1"
+    modules = [ 'javafx.controls','javafx.fxml', 'javafx.web' ]
+}
+
+dependencies {
+  //JUnit
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.4.2'
+
+  //Neverlang
+  implementation group: 'it.unimi.di.adaptlab', name: 'neverlang', version: '2.1.2'
+  //AiDE
+  //implementation group: 'it.unimi.di.adaptlab', name: 'aide', version: '2.0.1'
+
+  compile fileTree(include:["*.jar"], dir:"lib")
+}
+
+
+
+/* Generate a fat jar for distribution */
+task fatJar(type: Jar) {
+  manifest {
+    attributes (
+      'Implementation-Title': "${group}",
+      'Implementation-Version': "${version}"
+    )
+  }
+  archiveName = "${project.name}.jar"
+  from {
+    configurations.compile.collect {
+      it.isDirectory() ? it : zipTree(it)
+    }
+  }
+  exclude 'META-INF/**/*'
+  with jar
+}
+
+//Deploy fat jar
+task distribution(type: Copy) {
+  group = 'build'
+  description = 'Builds the Neverlang project into a jar archive'
+  from fatJar
+  into "${project.projectDir}/dist/"
+}
+
+//Deploy to the local maven repository
+publishing {
+  publications {
+    maven(MavenPublication) {
+      groupId = 'it.unimi.di.adaptlab.neverlang'
+      artifactId = 'nlEditor'
+      version = '1.0.0'
+
+      from components.java
+    }
+  }
+  repositories {
+    mavenLocal()
+  }
+}
